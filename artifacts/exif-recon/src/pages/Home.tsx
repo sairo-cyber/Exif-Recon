@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Background } from '../components/Background';
 import { Header } from '../components/Header';
 import { UploadZone } from '../components/UploadZone';
@@ -11,6 +11,17 @@ import { useExifParser } from '../hooks/useExifParser';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, RotateCcw } from 'lucide-react';
 
+function SystemClock() {
+  const [time, setTime] = useState('');
+  useEffect(() => {
+    const update = () => setTime(new Date().toISOString().substring(0, 19).replace('T', ' '));
+    update();
+    const t = setInterval(update, 1000);
+    return () => clearInterval(t);
+  }, []);
+  return <span>{time}</span>;
+}
+
 export default function Home() {
   const { parseFile, reset, data, error, isParsing, imageMeta } = useExifParser();
 
@@ -21,7 +32,6 @@ export default function Home() {
   const hasData = data && Object.keys(data).length > 0;
   const hasGps = hasData && (data.latitude !== undefined || data.GPSLatitude !== undefined);
 
-  // Derive simple latitude/longitude for map if available
   let lat: number | undefined;
   let lon: number | undefined;
 
@@ -29,13 +39,10 @@ export default function Home() {
     lat = data.latitude;
     lon = data.longitude;
   } else if (data?.GPSLatitude !== undefined && Array.isArray(data.GPSLatitude)) {
-    // If we only got the raw arrays but exifr parsed it roughly (exifr usually gives flat lat/lon)
-    // fallback logic just in case
     lat = typeof data.GPSLatitude === 'number' ? data.GPSLatitude : undefined;
     lon = typeof data.GPSLongitude === 'number' ? data.GPSLongitude : undefined;
   }
 
-  // Use flat exifr lat/lon first (exifr adds these automatically if gps:true is used and data is valid)
   const finalLat = lat;
   const finalLon = lon;
   const showMap = finalLat !== undefined && finalLon !== undefined;
@@ -45,10 +52,21 @@ export default function Home() {
     <div className="min-h-[100dvh] w-full text-foreground relative flex flex-col">
       <Background />
       
+      {/* Top System Bar */}
+      <div className="w-full h-[28px] bg-[#06070a] border-b border-[#1a2028] flex items-center justify-between px-4 z-50">
+        <div className="flex items-center font-mono text-[10px] uppercase tracking-widest">
+          <span className="text-green mr-2">■ EXIF-RECON</span>
+          <span className="text-muted-foreground hidden sm:inline">// FORENSIC IMAGE ANALYSIS SYSTEM</span>
+        </div>
+        <div className="flex items-center gap-4 font-mono text-[10px] text-muted-foreground tracking-widest">
+          <SystemClock />
+        </div>
+      </div>
+      
       {!hasData && !error && !isParsing && (
-        <div className="flex-1 flex flex-col pt-12 pb-12">
+        <div className="flex-1 flex flex-col pb-12">
           <Header />
-          <div className="flex-1 flex items-center justify-center mt-8">
+          <div className="flex-1 flex items-center justify-center mt-2">
             <UploadZone onFileSelect={parseFile} />
           </div>
         </div>
@@ -58,7 +76,7 @@ export default function Home() {
         <div className="flex-1 flex items-center justify-center">
           <div className="flex flex-col items-center gap-4">
             <div className="w-16 h-16 border-2 border-cyan border-t-transparent rounded-full animate-spin" />
-            <div className="font-mono text-cyan tracking-widest animate-pulse">EXTRACTING METADATA...</div>
+            <div className="font-mono text-[11px] text-cyan tracking-[0.3em] animate-pulse">EXTRACTING METADATA...</div>
           </div>
         </div>
       )}
@@ -86,23 +104,21 @@ export default function Home() {
       <AnimatePresence>
         {hasData && imageMeta && !isParsing && !error && (
           <motion.div 
-            className="flex-1 flex flex-col p-2 md:p-6"
+            className="flex-1 flex flex-col"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             {/* Header Mini */}
-            <div className="flex justify-between items-center px-2 mb-2">
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-cyan animate-pulse" />
-                <h1 className="font-mono text-xl font-bold tracking-widest">EXIF // RECON</h1>
+            <div className="flex justify-between items-center px-4 pt-4 mb-2">
+              <div className="font-mono text-[10px] sm:text-xs text-muted-foreground uppercase tracking-[0.2em] sm:tracking-widest">
+                SYSTEM <span className="text-cyan/50 mx-1 sm:mx-2">//</span> ANALYSIS <span className="text-cyan/50 mx-1 sm:mx-2">//</span> <span className="text-white">TARGET ACQUIRED</span>
               </div>
               <button 
                 onClick={handleReset}
-                className="text-muted-foreground hover:text-cyan font-mono text-xs flex items-center gap-2 border border-border hover:border-cyan/50 px-3 py-1.5 rounded transition-all bg-card"
+                className="text-muted-foreground hover:text-[#ff003c] font-mono text-xs tracking-[0.2em] transition-colors"
               >
-                <RotateCcw className="w-3 h-3" />
-                NEW TARGET
+                [ CLEAR TARGET ]
               </button>
             </div>
 
@@ -115,24 +131,27 @@ export default function Home() {
               hasGps={showMap}
             />
 
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 mt-4 pb-12">
+            <div className="flex-1 flex flex-col lg:flex-row mt-2 pb-12 px-2 md:px-4">
               
               {/* Left Col - Image */}
-              <div className="lg:col-span-5 h-[50vh] lg:h-[calc(100vh-200px)]">
+              <div className="w-full lg:w-[45%] h-[50vh] lg:h-[calc(100vh-180px)] pr-0 lg:pr-6 pb-6 lg:pb-0">
                 <ImagePreview url={imageMeta.url} filename={imageMeta.name} />
               </div>
 
+              {/* Vertical Grid Separator */}
+              <div className="hidden lg:block w-[1px] h-[calc(100vh-180px)] bg-[#1a2028]" />
+
               {/* Right Col - Data */}
-              <div className="lg:col-span-7 flex flex-col gap-6">
+              <div className="w-full lg:w-[55%] pl-0 lg:pl-6 h-auto lg:h-[calc(100vh-180px)]">
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 h-full">
                   
                   {/* Inspector Panel */}
-                  <div className="xl:col-span-1 h-[600px] xl:h-[calc(100vh-200px)]">
+                  <div className="xl:col-span-1 h-[600px] xl:h-full">
                     <ExifInspector data={data} />
                   </div>
 
                   {/* Right Side Maps & Actions */}
-                  <div className="xl:col-span-1 flex flex-col gap-6">
+                  <div className="xl:col-span-1 flex flex-col gap-6 h-[800px] xl:h-full">
                     {showMap && (
                       <GpsMap 
                         latitude={finalLat} 

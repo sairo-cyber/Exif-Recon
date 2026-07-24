@@ -1,42 +1,50 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
 import { useScrambleText } from '../hooks/useScrambleText';
-import { ShieldAlert } from 'lucide-react';
 
 export function Header() {
   const { displayText } = useScrambleText('EXIF // RECON', 1500);
+  const [isGlitching, setIsGlitching] = useState(false);
+  const [currentDate, setCurrentDate] = useState('');
+
+  useEffect(() => {
+    setCurrentDate(new Date().toISOString().split('T')[0]);
+    
+    // Add glitch flicker during the scramble
+    const timer1 = setTimeout(() => setIsGlitching(true), 400);
+    const timer2 = setTimeout(() => setIsGlitching(false), 450);
+    const timer3 = setTimeout(() => setIsGlitching(true), 900);
+    const timer4 = setTimeout(() => setIsGlitching(false), 950);
+
+    return () => {
+      clearTimeout(timer1); clearTimeout(timer2);
+      clearTimeout(timer3); clearTimeout(timer4);
+    };
+  }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center pt-16 pb-8">
-      <motion.div 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="flex items-center gap-4 mb-2"
-      >
-        <ShieldAlert className="w-8 h-8 text-cyan drop-shadow-[0_0_8px_rgba(0,240,255,0.5)]" />
-        <h1 className="text-4xl md:text-5xl font-mono font-bold tracking-[0.2em] text-white">
+    <div className="w-full px-8 pt-6 pb-4 flex flex-col relative">
+      <div className="font-mono text-xs text-green mb-4">
+        [SYS] FORENSIC WORKSTATION v4.2.1 // CLASSIFIED<span className="cursor-blink">|</span>
+      </div>
+      
+      <div className="flex items-center gap-6 mb-4">
+        <h1 className={`text-5xl md:text-7xl font-mono font-bold tracking-[0.15em] ${isGlitching ? 'text-cyan' : 'text-white'}`}>
           {displayText}
         </h1>
-      </motion.div>
-      <motion.p 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 0.8 }}
-        className="text-muted-foreground font-mono text-sm tracking-widest uppercase mt-2"
-      >
-        Digital Forensics Workstation
-      </motion.p>
-      
-      <motion.div 
-        initial={{ opacity: 0, scaleX: 0 }}
-        animate={{ opacity: 1, scaleX: 1 }}
-        transition={{ delay: 1.5, duration: 0.6, ease: "easeOut" }}
-        className="mt-6 flex items-center gap-3 text-xs font-mono text-green/80 bg-green/5 px-4 py-1.5 rounded border border-green/20"
-      >
-        <span className="w-2 h-2 rounded-full bg-green animate-pulse" />
-        SYSTEM READY // AWAITING INPUT
-      </motion.div>
+        <div className="w-[1px] h-12 bg-border/50 hidden md:block" />
+        <div className="font-mono text-sm text-muted-foreground tracking-[0.3em] uppercase hidden md:block">
+          Digital Forensics<br/>Workstation
+        </div>
+      </div>
+
+      <div className="w-full h-[1px] bg-[#262c33] mt-2" />
+
+      {/* Right side data readouts */}
+      <div className="absolute right-8 top-8 flex flex-col items-end gap-1 font-mono text-[10px] text-muted-foreground/50 hidden sm:flex">
+        <div>NODE // LOCAL-001</div>
+        <div>CLEARANCE // OPERATOR</div>
+        <div>DATE // {currentDate}</div>
+      </div>
     </div>
   );
 }

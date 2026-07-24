@@ -1,67 +1,76 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ExifData } from '../types/exif';
 import { HudPanel } from './HudPanel';
-import { motion } from 'framer-motion';
-import { Terminal } from 'lucide-react';
 
-interface ExifInspectorProps {
-  data: ExifData;
+function TypewriterValue({ text, delayMs = 15 }: { text: string; delayMs?: number }) {
+  const [displayed, setDisplayed] = useState('');
+  
+  useEffect(() => {
+    let i = 0;
+    setDisplayed('');
+    const timer = setInterval(() => {
+      setDisplayed(text.slice(0, i + 1));
+      i++;
+      if (i >= text.length) clearInterval(timer);
+    }, delayMs);
+    return () => clearInterval(timer);
+  }, [text, delayMs]);
+  
+  return <span>{displayed}</span>;
 }
 
 interface FieldProps {
   label: string;
   value: string | number | undefined | null;
-  delay: number;
 }
 
-function Field({ label, value, delay }: FieldProps) {
+function Field({ label, value }: FieldProps) {
   if (value === undefined || value === null || value === '') return null;
+  const strVal = String(value);
   
   return (
-    <motion.div 
-      initial={{ opacity: 0, x: -10 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: delay * 0.02 + 0.3, duration: 0.3 }}
-      className="mb-3"
-    >
-      <div className="text-[10px] text-muted-foreground font-mono mb-0.5 uppercase tracking-wider">{label}</div>
-      <div className="text-sm text-white font-mono break-all">{String(value)}</div>
-    </motion.div>
+    <div className="flex justify-between items-end border-b border-[rgba(38,44,51,0.4)] py-1.5 mb-1 group">
+      <div className="text-[11px] text-[rgba(0,240,255,0.5)] font-mono uppercase tracking-wider">
+        {label}
+      </div>
+      <div className="text-[10px] text-muted-foreground/30 font-mono flex-1 overflow-hidden mx-4 tracking-widest hidden md:block group-hover:text-muted-foreground/50 transition-colors">
+        .................................................................................................................
+      </div>
+      <div className="text-[12px] text-white font-mono text-right truncate max-w-[60%]">
+        <TypewriterValue text={strVal} />
+      </div>
+    </div>
   );
 }
 
 interface SectionProps {
   title: string;
   fields: { label: string; value: any }[];
-  startIndex: number;
 }
 
-function Section({ title, fields, startIndex }: SectionProps) {
+function Section({ title, fields }: SectionProps) {
   const validFields = fields.filter(f => f.value !== undefined && f.value !== null && f.value !== '');
   if (validFields.length === 0) return null;
 
   return (
-    <div className="mb-8 relative pl-3">
-      {/* Left accent border */}
-      <motion.div 
-        className="absolute left-0 top-0 bottom-0 w-[2px] bg-cyan origin-bottom"
-        initial={{ scaleY: 0 }}
-        animate={{ scaleY: 1 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-      />
-      <div className="text-xs font-bold text-cyan/70 font-mono mb-3 tracking-widest uppercase border-b border-border/50 pb-1 inline-block pr-4">
-        {title}
+    <div className="mb-6">
+      <div className="flex items-center mb-3">
+        <div className="flex-1 h-[1px] bg-border/40" />
+        <span className="text-[10px] font-mono text-cyan/50 uppercase px-3 tracking-[0.3em]">
+          {title}
+        </span>
+        <div className="flex-1 h-[1px] bg-border/40" />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
-        {validFields.map((f, i) => (
-          <Field key={f.label} label={f.label} value={f.value} delay={startIndex + i} />
+      <div className="flex flex-col">
+        {validFields.map(f => (
+          <Field key={f.label} label={f.label} value={f.value} />
         ))}
       </div>
     </div>
   );
 }
 
-export function ExifInspector({ data }: ExifInspectorProps) {
+export function ExifInspector({ data }: { data: ExifData }) {
   const formatDate = (val: string | Date | undefined) => {
     if (!val) return undefined;
     try {
@@ -83,13 +92,10 @@ export function ExifInspector({ data }: ExifInspectorProps) {
     return val;
   };
 
-  let fieldIndex = 0;
-
   return (
-    <HudPanel title="METADATA READOUT" icon={<Terminal className="w-4 h-4 text-cyan" />} delay={0.2} className="h-full">
+    <HudPanel title="DATA STREAM" delay={0.2} className="h-full">
       <Section 
         title="CAMERA" 
-        startIndex={fieldIndex += 10}
         fields={[
           { label: 'Make', value: data.Make },
           { label: 'Model', value: data.Model },
@@ -98,7 +104,6 @@ export function ExifInspector({ data }: ExifInspectorProps) {
       />
       <Section 
         title="LENS" 
-        startIndex={fieldIndex += 10}
         fields={[
           { label: 'Lens Model', value: data.LensModel },
           { label: 'Lens Make', value: data.LensMake },
@@ -108,7 +113,6 @@ export function ExifInspector({ data }: ExifInspectorProps) {
       />
       <Section 
         title="EXPOSURE" 
-        startIndex={fieldIndex += 10}
         fields={[
           { label: 'Exposure Time', value: data.ExposureTime ? `${formatFraction(data.ExposureTime)}s` : undefined },
           { label: 'F-Number', value: data.FNumber ? `f/${data.FNumber}` : undefined },
@@ -122,7 +126,6 @@ export function ExifInspector({ data }: ExifInspectorProps) {
       />
       <Section 
         title="IMAGE PROPERTIES" 
-        startIndex={fieldIndex += 10}
         fields={[
           { label: 'Width', value: data.ImageWidth ? `${data.ImageWidth}px` : undefined },
           { label: 'Height', value: data.ImageHeight ? `${data.ImageHeight}px` : undefined },
@@ -133,7 +136,6 @@ export function ExifInspector({ data }: ExifInspectorProps) {
       />
       <Section 
         title="DATE / TIME" 
-        startIndex={fieldIndex += 10}
         fields={[
           { label: 'Original', value: formatDate(data.DateTimeOriginal) },
           { label: 'Created', value: formatDate(data.CreateDate) },
@@ -142,16 +144,11 @@ export function ExifInspector({ data }: ExifInspectorProps) {
       />
       <Section 
         title="DEVICE / SOFTWARE" 
-        startIndex={fieldIndex += 10}
         fields={[
           { label: 'Host Computer', value: data.HostComputer },
           { label: 'Processing Software', value: data.ProcessingSoftware },
         ]} 
       />
-      
-      {/* Catch-all for any other strings/numbers we didn't explicitly map, if we want to show them? 
-          Actually, instruction says: "Groups to display... (only show fields that actually exist)"
-          We'll stick to the specific groups mentioned to keep it clean. */}
     </HudPanel>
   );
 }

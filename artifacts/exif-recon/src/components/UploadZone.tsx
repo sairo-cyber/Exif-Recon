@@ -1,6 +1,4 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Upload, Crosshair } from 'lucide-react';
 
 interface UploadZoneProps {
   onFileSelect: (file: File) => void;
@@ -61,29 +59,33 @@ export function UploadZone({ onFileSelect }: UploadZoneProps) {
   }, [onFileSelect]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 1.8, duration: 0.6 }}
-      className="w-full max-w-3xl mx-auto px-4"
-    >
+    <div className="w-full max-w-4xl mx-auto px-4 mt-8 md:mt-16">
       <div
-        className={`relative group flex flex-col items-center justify-center p-12 md:p-24 border-2 border-dashed transition-all duration-300 cursor-pointer bg-card/40 backdrop-blur-sm ${
-          isDragging 
-            ? 'border-cyan bg-cyan/5 shadow-[0_0_30px_rgba(0,240,255,0.1)]' 
-            : 'border-border hover:border-cyan/50 hover:bg-card/80'
-        }`}
+        className={`relative group flex flex-col items-center justify-center py-16 px-4 transition-all duration-300 cursor-pointer overflow-hidden
+          ${isDragging ? 'bg-[rgba(0,240,255,0.05)] border-[rgba(0,240,255,0.5)]' : 'bg-transparent border-[#262c33] hover:border-[rgba(0,240,255,0.2)] hover:shadow-[inset_0_0_20px_rgba(0,240,255,0.02)]'}
+        `}
+        style={{
+          borderWidth: isDragging ? '2px' : '1px',
+          borderStyle: 'solid',
+          boxShadow: isDragging ? 'inset 0 0 40px rgba(0,240,255,0.05)' : 'none'
+        }}
         onDragEnter={handleDragIn}
         onDragLeave={handleDragOut}
         onDragOver={handleDrag}
         onDrop={handleDrop}
         onClick={() => document.getElementById('file-upload')?.click()}
       >
-        {/* Tactical corners */}
-        <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-cyan/70" />
-        <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-cyan/70" />
-        <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-cyan/70" />
-        <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-cyan/70" />
+        {/* L-Marks */}
+        <div className={`absolute -top-[2px] -left-[2px] w-[12px] h-[12px] border-t-[2px] border-l-[2px] border-[#00f0ff] transition-opacity duration-300 ${isDragging ? 'opacity-100' : 'opacity-60 group-hover:opacity-100'}`} />
+        <div className={`absolute -top-[2px] -right-[2px] w-[12px] h-[12px] border-t-[2px] border-r-[2px] border-[#00f0ff] transition-opacity duration-300 ${isDragging ? 'opacity-100' : 'opacity-60 group-hover:opacity-100'}`} />
+        <div className={`absolute -bottom-[2px] -left-[2px] w-[12px] h-[12px] border-b-[2px] border-l-[2px] border-[#00f0ff] transition-opacity duration-300 ${isDragging ? 'opacity-100' : 'opacity-60 group-hover:opacity-100'}`} />
+        <div className={`absolute -bottom-[2px] -right-[2px] w-[12px] h-[12px] border-b-[2px] border-r-[2px] border-[#00f0ff] transition-opacity duration-300 ${isDragging ? 'opacity-100' : 'opacity-60 group-hover:opacity-100'}`} />
+
+        {/* Scanline inside zone */}
+        <div 
+          className="absolute left-0 right-0 h-[1px] bg-[rgba(0,240,255,0.15)] pointer-events-none"
+          style={{ animation: 'scan-horizontal 4s infinite linear' }}
+        />
 
         <input
           id="file-upload"
@@ -93,30 +95,32 @@ export function UploadZone({ onFileSelect }: UploadZoneProps) {
           onChange={handleFileChange}
         />
 
-        <motion.div
-          animate={isDragging ? { scale: 1.1 } : { scale: 1 }}
-          className="relative mb-6"
-        >
-          <div className="absolute inset-0 animate-ping opacity-20 bg-cyan rounded-full" />
-          <div className="relative bg-card border border-border p-4 rounded-full">
-            <Crosshair className={`w-8 h-8 ${isDragging ? 'text-cyan' : 'text-muted-foreground'}`} />
-          </div>
-        </motion.div>
+        {/* Target SVG */}
+        <div className="relative mb-6">
+          <svg width="48" height="48" viewBox="0 0 48 48" className="stroke-[rgba(0,240,255,0.5)] fill-transparent">
+            {/* Rotating outer ring */}
+            <circle cx="24" cy="24" r="20" strokeWidth="1" strokeDasharray="4 4" className="origin-center animate-[spin_20s_linear_infinite]" />
+            {/* Inner crosshair */}
+            <line x1="24" y1="0" x2="24" y2="48" strokeWidth="1" />
+            <line x1="0" y1="24" x2="48" y2="24" strokeWidth="1" />
+            <circle cx="24" cy="24" r="8" strokeWidth="1" />
+            <circle cx="24" cy="24" r="2" fill="rgba(0,240,255,0.5)" />
+          </svg>
+        </div>
 
-        <h3 className="text-xl font-mono text-white mb-2 tracking-wide text-center">
-          DRAG & DROP TARGET
+        <h3 className="text-2xl font-mono text-white mb-3 tracking-[0.3em] font-bold z-10">
+          LOAD TARGET
         </h3>
-        <p className="text-sm font-mono text-muted-foreground text-center mb-6">
-          CLICK TO BROWSE OR PASTE IMAGE (CTRL+V)
+        <p className="text-[11px] font-mono text-muted-foreground/60 mb-4 tracking-widest uppercase z-10">
+          DRAG FILE — CLICK TO BROWSE — PASTE (CTRL+V)
         </p>
         
-        <div className="flex gap-4 text-xs font-mono text-muted-foreground/60 uppercase tracking-widest">
-          <span>JPEG</span>
-          <span>PNG</span>
-          <span>WEBP</span>
-          <span>HEIC</span>
+        <div className="w-[80px] h-[1px] bg-[#262c33] mb-4 z-10" />
+
+        <div className="text-[10px] font-mono text-muted-foreground/40 uppercase tracking-[0.4em] z-10">
+          JPEG · PNG · WEBP · HEIC
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
