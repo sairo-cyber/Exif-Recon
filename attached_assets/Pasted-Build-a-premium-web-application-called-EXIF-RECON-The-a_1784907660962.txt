@@ -1,0 +1,627 @@
+Build a premium web application called:
+
+# EXIF // RECON
+
+The application must be a real, production-quality EXIF parser and metadata inspector.
+
+The priority is to build an application that people can genuinely use every day while delivering an exceptional cinematic experience inspired by professional digital forensics software.
+
+This is NOT a fake hacker simulator.
+
+Every displayed information must come from the uploaded file.
+
+Never invent metadata.
+
+Never fabricate confidence scores.
+
+Never fake AI analysis.
+
+Never display fictional GPS coordinates.
+
+The design tells the story.
+The data stays truthful.
+
+====================================================
+GLOBAL DIRECTION
+====================================================
+
+The experience should feel like operating an advanced digital forensic workstation.
+
+Main inspirations:
+
+• Watch Dogs
+• Splinter Cell
+• Ghost Recon
+• Mr. Robot
+• Modern military HUD interfaces
+• Professional OSINT software
+• Professional cybersecurity tools
+• Blackbox forensic software
+
+Avoid:
+
+• Generic Tailwind dashboards
+• Glassmorphism
+• Colorful cyberpunk overload
+• Gaming RGB aesthetics
+• Oversized rounded cards
+• Excessive gradients
+• Fake hacker clichés
+
+Instead create something believable.
+
+Minimal.
+
+Sharp.
+
+Technical.
+
+Professional.
+
+Every interface element should feel engineered.
+
+The application should feel like real software used by investigators, journalists, photographers and OSINT analysts.
+
+====================================================
+TECH STACK
+====================================================
+
+Use:
+
+• React
+• TypeScript
+• Vite
+• Tailwind CSS
+• Framer Motion
+• Leaflet
+• CartoDB Dark Matter tiles
+• exifr (or the best maintained EXIF parsing library)
+• Lucide React icons
+
+Write clean, modular and production-ready code.
+
+====================================================
+DESIGN SYSTEM
+====================================================
+
+Background
+
+#08090c
+
+Secondary panels
+
+#101216
+
+Borders
+
+#262c33
+
+Accent Colors
+
+Crimson
+
+#ff003c
+
+Neon Cyan
+
+#00f0ff
+
+Terminal Green
+
+#00ff66
+
+Text
+
+White
+
+Light Gray
+
+High Contrast
+
+Grid
+
+Very subtle.
+
+Noise overlay
+
+Very subtle.
+
+CRT scanlines
+
+Almost invisible.
+
+Accent colors must be used sparingly.
+
+Most of the interface should remain monochrome.
+
+Colors should indicate actions, warnings and important information.
+
+Corners
+
+Small radius.
+
+Mostly squared.
+
+Thin borders.
+
+Floating HUD panels.
+
+====================================================
+TYPOGRAPHY
+====================================================
+
+Use modern technical fonts.
+
+Examples:
+
+• Space Grotesk
+• IBM Plex Mono
+• JetBrains Mono
+• Inter
+
+Titles
+
+Large.
+
+Uppercase.
+
+Wide letter spacing.
+
+Body
+
+Clean.
+
+Easy to read.
+
+Numbers
+
+Monospace.
+
+Metadata values should resemble technical readouts.
+
+====================================================
+LAYOUT
+====================================================
+
+The application should feel like a command center.
+
+Large centered workspace.
+
+Excellent spacing.
+
+Background tactical grid.
+
+Subtle animated particles.
+
+Moving telemetry lines.
+
+Very light CRT scanlines.
+
+Desktop first.
+
+Excellent responsive layout.
+
+====================================================
+VISUAL HIERARCHY
+====================================================
+
+The uploaded image is always the primary focus.
+
+Metadata panels support the image rather than dominate it.
+
+GPS map only appears when GPS metadata exists.
+
+Whitespace should be used generously.
+
+Avoid visual clutter.
+
+====================================================
+MOTION SYSTEM
+====================================================
+
+Motion should feel premium.
+
+Fast.
+
+Smooth.
+
+60 FPS.
+
+Everything should feel intentional.
+
+Animations include:
+
+• Text scrambling
+• Panel reveal
+• Fade
+• Slide
+• Radar sweep
+• Scanline sweep
+• Animated borders
+• Cursor blink
+• Telemetry updates
+• Smooth hover effects
+• Grid movement
+
+Glitch effects must be subtle and occasional.
+
+Never continuously glitch the interface.
+
+Animations should communicate precision, not chaos.
+
+No animation should become distracting.
+
+Most transitions should remain below 500ms.
+
+====================================================
+LANDING EXPERIENCE
+====================================================
+
+The page opens on a clean forensic workstation.
+
+The title appears with a realistic cipher scrambling animation before resolving to:
+
+EXIF // RECON
+
+Subtitle:
+
+Digital Forensics Workstation
+
+The upload area fades smoothly into view.
+
+No unnecessary splash screen.
+
+The application should be usable immediately.
+
+====================================================
+UPLOAD
+====================================================
+
+Support:
+
+• Drag & Drop
+• Paste image
+• Browse file
+
+Supported formats:
+
+• JPEG
+• PNG
+• WEBP
+• HEIC (if supported)
+
+Display upload progress.
+
+Immediately parse metadata.
+
+Never fake loading.
+
+If parsing is extremely fast, allow a short cinematic transition (300–600ms) only to improve visual polish.
+
+====================================================
+IMAGE PREVIEW
+====================================================
+
+Display the uploaded image prominently.
+
+Before it appears:
+
+• Radar sweep
+• Scan line
+• Soft reveal
+
+Then display the actual image.
+
+Allow zoom.
+
+Maintain aspect ratio.
+
+Optimize rendering performance.
+
+====================================================
+EXIF INSPECTOR
+====================================================
+
+Display every available metadata grouped by category.
+
+Examples:
+
+• Camera
+• Lens
+• Exposure
+• GPS
+• Date
+• Dimensions
+• Software
+• Maker Notes
+• Color Space
+• Orientation
+• ISO
+• Aperture
+• Exposure Time
+• Focal Length
+• Flash
+• White Balance
+• Metering
+• Exposure Bias
+• Resolution
+
+If a field does not exist:
+
+Hide it or display:
+
+Unavailable
+
+Never invent values.
+
+====================================================
+GPS
+====================================================
+
+If GPS metadata exists:
+
+Display:
+
+• Coordinates
+• Altitude
+• Interactive map
+
+Use Leaflet with CartoDB Dark Matter.
+
+Automatically center the location.
+
+Smooth zoom animation.
+
+Place one tactical marker.
+
+If GPS does not exist:
+
+Hide the map.
+
+Display:
+
+"No GPS metadata found."
+
+====================================================
+METADATA REMOVAL
+====================================================
+
+Provide a real metadata removal feature.
+
+The generated image must actually remove EXIF metadata.
+
+Image pixels should remain unchanged.
+
+Allow downloading the cleaned image.
+
+Clearly explain what has been removed.
+
+====================================================
+STATUS BAR
+====================================================
+
+Display real information only.
+
+Examples:
+
+• Filename
+• Resolution
+• File Size
+• Metadata Count
+• GPS Available
+
+====================================================
+INTERFACE PANELS
+====================================================
+
+Panels should resemble professional military equipment.
+
+Thin borders.
+
+Subtle glow.
+
+Animated header line.
+
+Technical labels.
+
+Monospace values.
+
+Example:
+
+CAMERA
+
+Canon EOS R5
+
+Instead of
+
+Camera:
+Canon EOS R5
+
+====================================================
+BACKGROUND
+====================================================
+
+Animated tactical grid.
+
+Tiny floating particles.
+
+Occasional scanline.
+
+Telemetry overlays.
+
+Everything remains subtle.
+
+Never distracting.
+
+====================================================
+MICRO INTERACTIONS
+====================================================
+
+Buttons
+
+• Soft glow
+• Slight lift
+• Smooth hover
+
+Cards
+
+• Slight illumination
+
+Inputs
+
+• Animated border
+
+Map
+
+• Smooth transitions
+
+Metadata
+
+• Fade-in individually
+
+Cursor
+
+• Technical styling
+
+Every interaction should feel responsive and premium.
+
+====================================================
+ICONS
+====================================================
+
+Use clean outline icons.
+
+Technical.
+
+Minimal.
+
+No cartoon icons.
+
+====================================================
+USER EXPERIENCE
+====================================================
+
+The cinematic appearance must never reduce usability.
+
+Users should instantly understand how to:
+
+• Upload an image
+• Read metadata
+• Locate GPS information
+• Remove metadata
+• Download the cleaned image
+
+Beauty must never come at the expense of usability.
+
+====================================================
+ERROR STATES
+====================================================
+
+Create elegant error screens.
+
+Examples:
+
+• Unsupported format
+• Corrupted EXIF
+• No metadata available
+• GPS unavailable
+
+Explain clearly why the issue occurred.
+
+====================================================
+RESPONSIVE
+====================================================
+
+Desktop.
+
+Tablet.
+
+Mobile.
+
+No broken layouts.
+
+Panels stack naturally.
+
+====================================================
+ACCESSIBILITY
+====================================================
+
+Keyboard navigation.
+
+ARIA labels.
+
+Visible focus states.
+
+High contrast.
+
+====================================================
+PERFORMANCE
+====================================================
+
+Maintain smooth animations.
+
+Avoid unnecessary re-renders.
+
+Lazy-load the map.
+
+Optimize image previews.
+
+Prioritize performance over visual excess.
+
+====================================================
+CODE QUALITY
+====================================================
+
+Clean architecture.
+
+Reusable components.
+
+Strong TypeScript typing.
+
+Well-separated modules.
+
+Readable code.
+
+No duplicated logic.
+
+Production-ready structure.
+
+====================================================
+DESIGN PHILOSOPHY
+====================================================
+
+Less is more.
+
+Every visual element must have a purpose.
+
+The application should feel expensive.
+
+It should look like professional software, not a movie prop.
+
+Think Apple-level polish combined with military engineering aesthetics.
+
+Whenever a design decision is unclear, always choose:
+
+• Elegance
+• Simplicity
+• Realism
+• Performance
+• Usability
+
+over flashy visual effects.
+
+====================================================
+FINAL GOAL
+====================================================
+
+Create an application that immediately impresses through polish, precision and attention to detail.
+
+The interface should feel like a real digital forensic workstation used by investigators, journalists, photographers and OSINT analysts.
+
+The application must be visually memorable while remaining a genuinely useful EXIF parser.
+
+Every animation should support the experience.
+
+Every piece of metadata must be accurate.
+
+The final result should feel like software that could realistically exist in a professional forensic laboratory.

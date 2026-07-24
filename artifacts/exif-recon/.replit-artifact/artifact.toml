@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "EXIF // RECON"
+version = "1.0.0"
+id = "artifacts/exif-recon"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25379
+
+[services.development]
+run = "pnpm --filter @workspace/exif-recon run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/exif-recon", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/exif-recon/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25379"
+BASE_PATH = "/"
