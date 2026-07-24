@@ -1,3 +1,6 @@
+this file contain the prompt used to create this app ( yes it's vibe-coded and i built it just for fun ).
+
+
 Build a premium web application called:
 
 # EXIF // RECON
